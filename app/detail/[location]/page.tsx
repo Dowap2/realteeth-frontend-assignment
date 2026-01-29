@@ -11,6 +11,7 @@ import {
   useCurrentWeather,
   useForecast,
 } from "@/src/entities/weather/model/useWeather";
+import type { WeatherData } from "@/src/entities/weather/model/types";
 import { getCoordinatesBySearch } from "@/src/shared/lib/geocoding";
 
 export default function DetailPage() {
@@ -105,7 +106,7 @@ function WeatherCardWithKoreanName({
   weather,
   koreanName,
 }: {
-  weather: any;
+  weather: WeatherData;
   koreanName: string;
 }) {
   const weatherWithKoreanName = {

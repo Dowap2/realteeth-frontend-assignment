@@ -70,23 +70,32 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ error: "No results found" }, { status: 404 });
-  } catch (error: any) {
-    console.error("❌ Kakao API Error:", {
-      message: error.message,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      data: error.response?.data,
-      headers: error.response?.headers,
-    });
-
-    return NextResponse.json(
-      {
-        error: "Geocoding failed",
-        details: error.message,
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("❌ Kakao API Error:", {
+        message: error.message,
         status: error.response?.status,
-        kakaoError: error.response?.data,
-      },
-      { status: 500 },
-    );
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        headers: error.response?.headers,
+      });
+
+      return NextResponse.json(
+        {
+          error: "Geocoding failed",
+          details: error.message,
+          status: error.response?.status,
+          kakaoError: error.response?.data,
+        },
+        { status: 500 },
+      );
+    } else {
+      console.error("❌ 알 수 없는 에러:", error);
+
+      return NextResponse.json(
+        { error: "Unknown error occurred" },
+        { status: 500 },
+      );
+    }
   }
 }

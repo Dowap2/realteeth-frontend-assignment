@@ -1,9 +1,3 @@
-/**
- * 애플리케이션 테마 정의
- *
- * 색상, 타이포그래피, 간격, 그림자 등 디자인 토큰 정의
- */
-
 export const theme = {
   colors: {
     primary: {

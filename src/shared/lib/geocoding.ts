@@ -1,7 +1,3 @@
-/**
- * 지오코딩 유틸리티
- */
-
 import { kakaoGeocodingApi } from "../api/kakaoGeocoding";
 import { geocodingApi } from "../api/geocoding";
 
@@ -39,8 +35,4 @@ export const getCoordinatesBySearch = async (
     console.error("❌ 좌표 검색 실패:", error);
     return null;
   }
-};
-
-export const getCoordinatesFromLocation = (location: string): Coordinates => {
-  return { lat: 37.5665, lon: 126.978, address: "서울특별시" };
 };

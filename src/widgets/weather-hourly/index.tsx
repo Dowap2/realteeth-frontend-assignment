@@ -1,6 +1,7 @@
 "use client";
 
 import styled from "@emotion/styled";
+import Image from "next/image";
 import type { ForecastData } from "@/src/entities/weather/model/types";
 
 interface WeatherHourlyProps {
@@ -31,11 +32,12 @@ export const WeatherHourly = ({ forecast }: WeatherHourlyProps) => {
             <TimeLabel>{item.time}</TimeLabel>
 
             <WeatherIcon>
-              <img
+              <Image
                 src={`https://openweathermap.org/img/wn/${item.icon}@2x.png`}
                 alt={item.description}
                 width={60}
                 height={60}
+                unoptimized
               />
             </WeatherIcon>
 

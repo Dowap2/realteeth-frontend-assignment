@@ -1,9 +1,3 @@
-/**
- * 역지오코딩 API Route
- *
- * 좌표 → 한글 주소 변환
- */
-
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 
@@ -60,18 +54,30 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ error: "No address found" }, { status: 404 });
-  } catch (error: any) {
-    console.error(
-      "❌ Kakao 역지오코딩 에러:",
-      error.response?.data || error.message,
-    );
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "❌ Kakao 역지오코딩 에러:",
+        error.response?.data || error.message,
+      );
 
-    return NextResponse.json(
-      {
-        error: "Reverse geocoding failed",
-        details: error.message,
-      },
-      { status: 500 },
-    );
+      return NextResponse.json(
+        {
+          error: "Reverse geocoding failed",
+          details: error.message,
+        },
+        { status: 500 },
+      );
+    } else {
+      console.error("❌ 알 수 없는 에러:", error);
+
+      return NextResponse.json(
+        {
+          error: "Reverse geocoding failed",
+          details: "Unknown error",
+        },
+        { status: 500 },
+      );
+    }
   }
 }

@@ -1,9 +1,3 @@
-/**
- * 역지오코딩 API
- *
- * 좌표 → 한글 주소 변환
- */
-
 import axios from "axios";
 
 interface ReverseGeocodingResult {
@@ -26,11 +20,15 @@ export const reverseGeocodingApi = {
         },
       );
       return data;
-    } catch (error: any) {
-      console.error(
-        "❌ 역지오코딩 실패:",
-        error.response?.data || error.message,
-      );
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(
+          "❌ 역지오코딩 실패:",
+          error.response?.data || error.message,
+        );
+      } else {
+        console.error("❌ 역지오코딩 실패:", error);
+      }
       return null;
     }
   },

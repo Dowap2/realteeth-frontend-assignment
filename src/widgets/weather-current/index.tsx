@@ -3,7 +3,7 @@
 import styled from "@emotion/styled";
 import { useCurrentWeather } from "@/src/entities/weather/model/useWeather";
 import { WeatherCard } from "@/src/entities/weather/ui/WeatherCard";
-import { getCoordinatesFromLocation } from "@/src/shared/lib/geocoding";
+import { getCoordinatesBySearch } from "@/src/shared/lib/geocoding";
 import { useEffect, useState } from "react";
 
 interface WeatherCurrentProps {
@@ -19,10 +19,12 @@ export const WeatherCurrent = ({
 
   useEffect(() => {
     if (selectedLocation) {
-      const newCoords = getCoordinatesFromLocation(selectedLocation);
-      if (newCoords) {
-        setCoords(newCoords);
-      }
+      // async 함수로 좌표 검색
+      getCoordinatesBySearch(selectedLocation).then((newCoords) => {
+        if (newCoords) {
+          setCoords(newCoords);
+        }
+      });
     } else if (initialCoords) {
       setCoords(initialCoords);
     }
