@@ -2,11 +2,13 @@
 
 import { useState, useCallback } from "react";
 import { searchDistricts } from "@entities/location/model/locationUtils";
+import { getCoordinatesBySearch } from "@shared/lib/geocoding";
 
 export const useLocationSearch = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   const handleSearch = useCallback((searchQuery: string) => {
     setQuery(searchQuery);
@@ -22,9 +24,16 @@ export const useLocationSearch = () => {
     setIsOpen(filtered.length > 0);
   }, []);
 
-  const handleSelect = useCallback((location: string) => {
+  const handleSelect = useCallback(async (location: string) => {
     setQuery(location);
     setIsOpen(false);
+    setIsSearching(true);
+
+    const coords = await getCoordinatesBySearch(location);
+
+    setIsSearching(false);
+
+    return coords;
   }, []);
 
   const handleClear = useCallback(() => {
@@ -37,6 +46,7 @@ export const useLocationSearch = () => {
     query,
     results,
     isOpen,
+    isSearching,
     handleSearch,
     handleSelect,
     handleClear,

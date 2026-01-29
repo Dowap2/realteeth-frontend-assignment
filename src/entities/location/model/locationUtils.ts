@@ -9,9 +9,11 @@ export const searchDistricts = (query: string): string[] => {
 
   const normalizedQuery = query.trim();
 
-  return districts
+  const results = districts
     .filter((district) => district.includes(normalizedQuery))
     .slice(0, 10);
+
+  return results;
 };
 
 export const parseDistrict = (districtStr: string) => {

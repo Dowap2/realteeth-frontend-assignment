@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { weatherApi } from "../api/weatherApi";
+import { weatherApi } from "@/src/entities/weather/api/weatherApi";
 
 export const useCurrentWeather = (lat: number, lon: number) => {
   return useQuery({

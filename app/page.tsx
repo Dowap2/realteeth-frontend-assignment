@@ -2,136 +2,141 @@
 
 import styled from "@emotion/styled";
 import { useState, useEffect } from "react";
-import { SearchInput } from "@/src/features/search-location/ui/SearchInput";
-import { WeatherCard } from "@/src/entities/weather/ui/WeatherCard";
-import { useCurrentWeather } from "@/src/entities/weather/model/useWeather";
-import { getCoordinatesFromLocation } from "@/src/shared/lib/geocoding";
+import { useRouter } from "next/navigation";
+import { SearchBar } from "@/src/widgets/search-bar";
+import { WeatherCurrentSimple } from "@/src/widgets/weather-current-simple";
+import { FavoritesGrid } from "@/src/widgets/favorites-grid";
+import { reverseGeocodingApi } from "@/src/shared/api/reverseGeocoding";
 
 export default function HomePage() {
-  const [selectedLocation, setSelectedLocation] = useState<string>("");
-  const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(
-    null,
-  );
-
-  const {
-    data: weather,
-    isLoading,
-    error,
-  } = useCurrentWeather(coords?.lat ?? 0, coords?.lon ?? 0);
+  const router = useRouter();
+  const [currentCoords, setCurrentCoords] = useState<{
+    lat: number;
+    lon: number;
+  } | null>(null);
+  const [currentLocationName, setCurrentLocationName] =
+    useState<string>("현재 위치");
 
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setCoords({
+        async (position) => {
+          const coords = {
             lat: position.coords.latitude,
             lon: position.coords.longitude,
-          });
+          };
+          setCurrentCoords(coords);
+
+          const address = await reverseGeocodingApi.getAddressFromCoords(
+            coords.lat,
+            coords.lon,
+          );
+
+          if (address) {
+            const displayName =
+              address.district && address.neighborhood
+                ? `${address.district} ${address.neighborhood}`
+                : address.city || "현재 위치";
+
+            setCurrentLocationName(displayName);
+          }
         },
         () => {
-          setCoords({ lat: 37.5665, lon: 126.978 });
+          setCurrentCoords({ lat: 37.5665, lon: 126.978 });
+          setCurrentLocationName("서울특별시");
         },
       );
     }
   }, []);
 
-  const handleSelectLocation = (location: string) => {
-    setSelectedLocation(location);
-    const coordinates = getCoordinatesFromLocation(location);
-
-    if (coordinates) {
-      setCoords(coordinates);
+  const handleSelectLocation = (
+    location: string,
+    coords: { lat: number; lon: number; address?: string } | null,
+  ) => {
+    if (coords) {
+      const displayName = coords.address || location;
+      router.push(
+        `/detail/${encodeURIComponent(displayName)}?lat=${coords.lat}&lon=${coords.lon}`,
+      );
     } else {
-      alert("해당 장소의 정보가 제공되지 않습니다.");
+      alert("해당 장소의 좌표를 찾을 수 없습니다.");
     }
   };
 
   return (
     <Container>
       <Header>
-        <Title>날씨 앱</Title>
-        <Subtitle>지역을 검색하여 날씨를 확인하세요</Subtitle>
+        <Title>날씨</Title>
+        <SearchBar onSelectLocation={handleSelectLocation} />
       </Header>
 
-      <SearchSection>
-        <SearchInput onSelectLocation={handleSelectLocation} />
-      </SearchSection>
+      <MainContent>
+        <CurrentWeatherSection>
+          <SectionTitle>현재 위치</SectionTitle>
+          <WeatherCurrentSimple
+            coords={currentCoords}
+            locationName={currentLocationName}
+          />
+        </CurrentWeatherSection>
 
-      <WeatherSection>
-        {isLoading && (
-          <LoadingMessage>날씨 정보를 불러오는 중...</LoadingMessage>
-        )}
-
-        {error && (
-          <ErrorMessage>
-            날씨 정보를 불러올 수 없습니다.
-            <br />
-            잠시 후 다시 시도해주세요.
-          </ErrorMessage>
-        )}
-
-        {weather && !isLoading && <WeatherCard weather={weather} />}
-      </WeatherSection>
+        <FavoritesSection>
+          <SectionTitle>즐겨찾기</SectionTitle>
+          <FavoritesGrid />
+        </FavoritesSection>
+      </MainContent>
     </Container>
   );
 }
 
-const Container = styled.main`
+const Container = styled.div`
   min-height: 100vh;
-  padding: ${({ theme }) => theme.spacing[6]};
   background: ${({ theme }) => theme.colors.background.default};
+`;
+
+const Header = styled.header`
+  background: ${({ theme }) => theme.colors.background.paper};
+  padding: ${({ theme }) => theme.spacing[6]};
+  box-shadow: ${({ theme }) => theme.shadows.sm};
+  position: sticky;
+  top: 0;
+  z-index: ${({ theme }) => theme.zIndex.sticky};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     padding: ${({ theme }) => theme.spacing[4]};
   }
 `;
 
-const Header = styled.header`
-  text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing[8]};
-  padding-top: ${({ theme }) => theme.spacing[8]};
-`;
-
 const Title = styled.h1`
-  font-size: ${({ theme }) => theme.typography.fontSize["4xl"]};
+  font-size: ${({ theme }) => theme.typography.fontSize["2xl"]};
   font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
   color: ${({ theme }) => theme.colors.text.primary};
-  margin-bottom: ${({ theme }) => theme.spacing[3]};
+  text-align: center;
+  margin-bottom: ${({ theme }) => theme.spacing[4]};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    font-size: ${({ theme }) => theme.typography.fontSize["3xl"]};
+    font-size: ${({ theme }) => theme.typography.fontSize.xl};
   }
 `;
 
-const Subtitle = styled.p`
-  font-size: ${({ theme }) => theme.typography.fontSize.lg};
-  color: ${({ theme }) => theme.colors.text.secondary};
+const MainContent = styled.main`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: ${({ theme }) => theme.spacing[6]};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    padding: ${({ theme }) => theme.spacing[4]};
+  }
 `;
 
-const SearchSection = styled.section`
-  display: flex;
-  justify-content: center;
+const CurrentWeatherSection = styled.section`
   margin-bottom: ${({ theme }) => theme.spacing[8]};
 `;
 
-const WeatherSection = styled.section`
-  margin-top: ${({ theme }) => theme.spacing[6]};
-`;
+const FavoritesSection = styled.section``;
 
-const LoadingMessage = styled.div`
-  text-align: center;
-  padding: ${({ theme }) => theme.spacing[12]};
-  color: ${({ theme }) => theme.colors.text.secondary};
-  font-size: ${({ theme }) => theme.typography.fontSize.lg};
-`;
-
-const ErrorMessage = styled.div`
-  text-align: center;
-  padding: ${({ theme }) => theme.spacing[8]};
-  background: ${({ theme }) => theme.colors.status.error};
-  color: white;
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  max-width: 600px;
-  margin: 0 auto;
-  line-height: ${({ theme }) => theme.typography.lineHeight.relaxed};
+const SectionTitle = styled.h2`
+  font-size: ${({ theme }) => theme.typography.fontSize.xl};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
+  color: ${({ theme }) => theme.colors.text.primary};
+  margin-bottom: ${({ theme }) => theme.spacing[4]};
 `;

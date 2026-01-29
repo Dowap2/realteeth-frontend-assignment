@@ -1,20 +1,30 @@
 "use client";
 
 import styled from "@emotion/styled";
-import { Search, X } from "lucide-react";
+import { Search, X, Loader } from "lucide-react";
 import { useLocationSearch } from "../model/useLocationSearch";
 
 interface SearchInputProps {
-  onSelectLocation: (location: string) => void;
+  onSelectLocation: (
+    location: string,
+    coords: { lat: number; lon: number } | null,
+  ) => void;
 }
 
 export const SearchInput = ({ onSelectLocation }: SearchInputProps) => {
-  const { query, results, isOpen, handleSearch, handleSelect, handleClear } =
-    useLocationSearch();
+  const {
+    query,
+    results,
+    isOpen,
+    isSearching,
+    handleSearch,
+    handleSelect,
+    handleClear,
+  } = useLocationSearch();
 
-  const onSelect = (location: string) => {
-    handleSelect(location);
-    onSelectLocation(location);
+  const onSelect = async (location: string) => {
+    const result = await handleSelect(location);
+    onSelectLocation(location, result);
   };
 
   return (
@@ -27,11 +37,15 @@ export const SearchInput = ({ onSelectLocation }: SearchInputProps) => {
           value={query}
           onChange={(e) => handleSearch(e.target.value)}
         />
-        {query && (
+        {isSearching ? (
+          <LoadingIcon>
+            <Loader size={20} />
+          </LoadingIcon>
+        ) : query ? (
           <ClearButton onClick={handleClear}>
             <X size={20} />
           </ClearButton>
-        )}
+        ) : null}
       </InputWrapper>
 
       {isOpen && results.length > 0 && (
@@ -87,6 +101,25 @@ const Input = styled.input`
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.text.disabled};
+  }
+`;
+
+const LoadingIcon = styled.div`
+  display: flex;
+  align-items: center;
+  color: ${({ theme }) => theme.colors.primary.main};
+
+  svg {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
 `;
 

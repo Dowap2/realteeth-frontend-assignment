@@ -39,6 +39,7 @@ export interface HourlyForecast {
     temp: number;
     temp_min: number;
     temp_max: number;
+    feels_like: number;
   };
   weather: Array<{
     description: string;
