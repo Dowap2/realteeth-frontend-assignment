@@ -7,10 +7,13 @@ export const getAllDistricts = (): string[] => {
 export const searchDistricts = (query: string): string[] => {
   if (!query.trim()) return [];
 
-  const normalizedQuery = query.trim();
+  const normalizedQuery = query.trim().replace(/\s+/g, "");
 
   const results = districts
-    .filter((district) => district.includes(normalizedQuery))
+    .filter((district) => {
+      const normalizedDistrict = district.replace(/-/g, "").replace(/\s+/g, "");
+      return normalizedDistrict.includes(normalizedQuery);
+    })
     .slice(0, 10);
 
   return results;

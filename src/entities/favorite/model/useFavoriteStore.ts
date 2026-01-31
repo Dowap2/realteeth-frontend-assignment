@@ -15,9 +15,19 @@ interface FavoriteStore {
   addFavorite: (favorite: Omit<Favorite, "id" | "addedAt">) => void;
   removeFavorite: (id: string) => void;
   updateFavoriteName: (id: string, name: string) => void;
-  isFavorite: (location: string) => boolean;
-  getFavoriteByLocation: (location: string) => Favorite | undefined;
+  isFavorite: (lat: number, lon: number) => boolean;
+  getFavoriteByCoords: (lat: number, lon: number) => Favorite | undefined;
 }
+
+const coordsEqual = (
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number,
+): boolean => {
+  const round = (num: number) => Math.round(num * 10) / 10;
+  return round(lat1) === round(lat2) && round(lon1) === round(lon2);
+};
 
 export const useFavoriteStore = create<FavoriteStore>()(
   persist(
@@ -32,7 +42,11 @@ export const useFavoriteStore = create<FavoriteStore>()(
           return;
         }
 
-        if (favorites.some((f) => f.location === favorite.location)) {
+        if (
+          favorites.some((f) =>
+            coordsEqual(f.lat, f.lon, favorite.lat, favorite.lon),
+          )
+        ) {
           alert("이미 즐겨찾기에 추가된 장소입니다.");
           return;
         }
@@ -60,12 +74,12 @@ export const useFavoriteStore = create<FavoriteStore>()(
         }));
       },
 
-      isFavorite: (location) => {
-        return get().favorites.some((f) => f.location === location);
+      isFavorite: (lat, lon) => {
+        return get().favorites.some((f) => coordsEqual(f.lat, f.lon, lat, lon));
       },
 
-      getFavoriteByLocation: (location) => {
-        return get().favorites.find((f) => f.location === location);
+      getFavoriteByCoords: (lat, lon) => {
+        return get().favorites.find((f) => coordsEqual(f.lat, f.lon, lat, lon));
       },
     }),
     {

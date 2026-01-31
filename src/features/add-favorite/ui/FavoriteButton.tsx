@@ -10,11 +10,11 @@ interface FavoriteButtonProps {
 }
 
 export const FavoriteButton = ({ location, lat, lon }: FavoriteButtonProps) => {
-  const { favorites, addFavorite, removeFavorite, isFavorite } =
+  const { addFavorite, removeFavorite, isFavorite, getFavoriteByCoords } =
     useFavoriteStore();
 
-  const isAlreadyFavorite = isFavorite(location);
-  const favorite = favorites.find((f) => f.location === location);
+  const isAlreadyFavorite = isFavorite(lat, lon);
+  const favorite = getFavoriteByCoords(lat, lon);
 
   const handleClick = () => {
     if (isAlreadyFavorite && favorite) {
@@ -32,9 +32,9 @@ export const FavoriteButton = ({ location, lat, lon }: FavoriteButtonProps) => {
   return (
     <button
       onClick={handleClick}
-      className={`flex h-10 w-10 items-center justify-center rounded-lg bg-transparent transition-all duration-200 hover:scale-110 hover:bg-[#F5F7FA] active:scale-95 ${
-        isAlreadyFavorite ? "text-[#FDB813]" : "text-[#6B7280]"
-      }`}
+      className={`flex items-center justify-center w-10 h-10 rounded transition-all ${
+        isAlreadyFavorite ? "text-yellow-500" : "text-gray-500"
+      } hover:bg-gray-100 hover:scale-110 active:scale-95`}
     >
       <Star size={24} fill={isAlreadyFavorite ? "currentColor" : "none"} />
     </button>
