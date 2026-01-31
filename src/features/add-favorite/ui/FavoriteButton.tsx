@@ -1,6 +1,5 @@
 "use client";
 
-import styled from "@emotion/styled";
 import { Star } from "lucide-react";
 import { useFavoriteStore } from "@/src/entities/favorite/model/useFavoriteStore";
 
@@ -31,30 +30,13 @@ export const FavoriteButton = ({ location, lat, lon }: FavoriteButtonProps) => {
   };
 
   return (
-    <Button onClick={handleClick} isFavorite={isAlreadyFavorite}>
+    <button
+      onClick={handleClick}
+      className={`flex h-10 w-10 items-center justify-center rounded-lg bg-transparent transition-all duration-200 hover:scale-110 hover:bg-[#F5F7FA] active:scale-95 ${
+        isAlreadyFavorite ? "text-[#FDB813]" : "text-[#6B7280]"
+      }`}
+    >
       <Star size={24} fill={isAlreadyFavorite ? "currentColor" : "none"} />
-    </Button>
+    </button>
   );
 };
-
-const Button = styled.button<{ isFavorite: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: transparent;
-  color: ${({ theme, isFavorite }) =>
-    isFavorite ? theme.colors.weather.sunny : theme.colors.text.secondary};
-  border-radius: ${({ theme }) => theme.borderRadius.base};
-  transition: all 0.2s;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.background.default};
-    transform: scale(1.1);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-`;

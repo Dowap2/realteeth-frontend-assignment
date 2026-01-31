@@ -1,6 +1,5 @@
 "use client";
 
-import styled from "@emotion/styled";
 import { Search, X, Loader } from "lucide-react";
 import { useLocationSearch } from "../model/useLocationSearch";
 
@@ -28,154 +27,49 @@ export const SearchInput = ({ onSelectLocation }: SearchInputProps) => {
   };
 
   return (
-    <Container>
-      <InputWrapper>
-        <SearchIcon size={20} />
-        <Input
+    <div className="relative w-full max-w-[600px]">
+      <div className="flex items-center rounded-lg bg-white p-4 shadow-md transition-shadow duration-200 focus-within:shadow-lg">
+        <Search size={20} className="shrink-0 text-[#6B7280]" />
+        <input
           type="text"
           placeholder="지역을 검색하세요 (예: 서울, 강남구, 역삼동)"
           value={query}
           onChange={(e) => handleSearch(e.target.value)}
+          className="mx-3 flex-1 border-none bg-transparent text-base outline-none placeholder:text-[#9CA3AF]"
         />
         {isSearching ? (
-          <LoadingIcon>
-            <Loader size={20} />
-          </LoadingIcon>
+          <div className="flex items-center text-[#4A90E2]">
+            <Loader size={20} className="animate-spin" />
+          </div>
         ) : query ? (
-          <ClearButton onClick={handleClear}>
+          <button
+            onClick={handleClear}
+            className="flex items-center justify-center rounded p-1 bg-transparent text-[#6B7280] transition-colors duration-200 hover:bg-[#F5F7FA]"
+          >
             <X size={20} />
-          </ClearButton>
+          </button>
         ) : null}
-      </InputWrapper>
+      </div>
 
       {isOpen && results.length > 0 && (
-        <ResultsList>
+        <ul className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-[1000] max-h-[400px] list-none overflow-y-auto rounded-lg bg-white shadow-lg">
           {results.map((location) => (
-            <ResultItem key={location} onClick={() => onSelect(location)}>
+            <li
+              key={location}
+              onClick={() => onSelect(location)}
+              className="cursor-pointer border-b border-[#E5E7EB] p-4 transition-colors duration-200 last:border-b-0 hover:bg-[#F5F7FA]"
+            >
               {location}
-            </ResultItem>
+            </li>
           ))}
-        </ResultsList>
+        </ul>
       )}
 
       {isOpen && results.length === 0 && query && (
-        <NoResults>검색 결과가 없습니다.</NoResults>
+        <div className="absolute left-0 right-0 top-[calc(100%+0.5rem)] rounded-lg bg-white p-6 text-center text-[#6B7280] shadow-lg">
+          검색 결과가 없습니다.
+        </div>
       )}
-    </Container>
+    </div>
   );
 };
-
-const Container = styled.div`
-  position: relative;
-  width: 100%;
-  max-width: 600px;
-`;
-
-const InputWrapper = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-  background: ${({ theme }) => theme.colors.background.paper};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  padding: ${({ theme }) => theme.spacing[4]};
-  box-shadow: ${({ theme }) => theme.shadows.md};
-  transition: box-shadow 0.2s;
-
-  &:focus-within {
-    box-shadow: ${({ theme }) => theme.shadows.lg};
-  }
-`;
-
-const SearchIcon = styled(Search)`
-  color: ${({ theme }) => theme.colors.text.secondary};
-  flex-shrink: 0;
-`;
-
-const Input = styled.input`
-  flex: 1;
-  border: none;
-  outline: none;
-  margin: 0 ${({ theme }) => theme.spacing[3]};
-  font-size: ${({ theme }) => theme.typography.fontSize.base};
-  background: transparent;
-
-  &::placeholder {
-    color: ${({ theme }) => theme.colors.text.disabled};
-  }
-`;
-
-const LoadingIcon = styled.div`
-  display: flex;
-  align-items: center;
-  color: ${({ theme }) => theme.colors.primary.main};
-
-  svg {
-    animation: spin 1s linear infinite;
-  }
-
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-`;
-
-const ClearButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing[1]};
-  background: transparent;
-  color: ${({ theme }) => theme.colors.text.secondary};
-  border-radius: ${({ theme }) => theme.borderRadius.sm};
-  transition: background-color 0.2s;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.background.default};
-  }
-`;
-
-const ResultsList = styled.ul`
-  position: absolute;
-  top: calc(100% + ${({ theme }) => theme.spacing[2]});
-  left: 0;
-  right: 0;
-  background: ${({ theme }) => theme.colors.background.paper};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  box-shadow: ${({ theme }) => theme.shadows.lg};
-  max-height: 400px;
-  overflow-y: auto;
-  z-index: ${({ theme }) => theme.zIndex.dropdown};
-  list-style: none;
-`;
-
-const ResultItem = styled.li`
-  padding: ${({ theme }) => theme.spacing[4]};
-  cursor: pointer;
-  transition: background-color 0.2s;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.background.default};
-  }
-`;
-
-const NoResults = styled.div`
-  position: absolute;
-  top: calc(100% + ${({ theme }) => theme.spacing[2]});
-  left: 0;
-  right: 0;
-  background: ${({ theme }) => theme.colors.background.paper};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  box-shadow: ${({ theme }) => theme.shadows.lg};
-  padding: ${({ theme }) => theme.spacing[6]};
-  text-align: center;
-  color: ${({ theme }) => theme.colors.text.secondary};
-`;

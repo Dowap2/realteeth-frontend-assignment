@@ -1,6 +1,5 @@
 "use client";
 
-import styled from "@emotion/styled";
 import { useRouter } from "next/navigation";
 import { MapPin } from "lucide-react";
 import { useCurrentWeather } from "@/src/entities/weather/model/useWeather";
@@ -22,11 +21,19 @@ export const WeatherCurrentSimple = ({
   } = useCurrentWeather(coords?.lat ?? 0, coords?.lon ?? 0);
 
   if (isLoading) {
-    return <LoadingCard>날씨 정보를 불러오는 중...</LoadingCard>;
+    return (
+      <div className="rounded-2xl bg-white p-12 text-center text-[#6B7280]">
+        날씨 정보를 불러오는 중...
+      </div>
+    );
   }
 
   if (error || !weather) {
-    return <ErrorCard>날씨 정보를 불러올 수 없습니다.</ErrorCard>;
+    return (
+      <div className="rounded-2xl bg-[#EF4444] p-12 text-center text-white">
+        날씨 정보를 불러올 수 없습니다.
+      </div>
+    );
   }
 
   const displayName = locationName || weather.name;
@@ -38,120 +45,40 @@ export const WeatherCurrentSimple = ({
   };
 
   return (
-    <Card onClick={handleClick}>
-      <LocationSection>
+    <div
+      onClick={handleClick}
+      className="cursor-pointer rounded-2xl bg-white p-6 shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-xl"
+    >
+      <div className="mb-4 flex items-center gap-2 text-[#6B7280]">
         <MapPin size={20} />
-        <Location>{displayName}</Location>
-      </LocationSection>
+        <span className="text-lg font-medium">{displayName}</span>
+      </div>
 
-      <WeatherInfo>
-        <MainTemp>{Math.round(weather.main.temp)}°C</MainTemp>
-        <Description>{weather.weather[0].description}</Description>
-      </WeatherInfo>
+      <div className="mb-4 text-center">
+        <div className="mb-2 text-4xl font-bold text-[#4A90E2]">
+          {Math.round(weather.main.temp)}°C
+        </div>
+        <div className="text-base capitalize text-[#6B7280]">
+          {weather.weather[0].description}
+        </div>
+      </div>
 
-      <TempRange>
-        <TempItem>
-          <Label>최저</Label>
-          <Value>{Math.round(weather.main.temp_min)}°C</Value>
-        </TempItem>
-        <TempItem>
-          <Label>최고</Label>
-          <Value>{Math.round(weather.main.temp_max)}°C</Value>
-        </TempItem>
-      </TempRange>
+      <div className="mb-4 flex justify-around border-y border-[#E5E7EB] py-4">
+        <div className="text-center">
+          <div className="mb-1 text-sm text-[#6B7280]">최저</div>
+          <div className="text-lg font-semibold text-[#1A1A1A]">
+            {Math.round(weather.main.temp_min)}°C
+          </div>
+        </div>
+        <div className="text-center">
+          <div className="mb-1 text-sm text-[#6B7280]">최고</div>
+          <div className="text-lg font-semibold text-[#1A1A1A]">
+            {Math.round(weather.main.temp_max)}°C
+          </div>
+        </div>
+      </div>
 
-      <ViewDetail>상세 보기 →</ViewDetail>
-    </Card>
+      <div className="text-center font-medium text-[#4A90E2]">상세 보기 →</div>
+    </div>
   );
 };
-
-const Card = styled.div`
-  background: ${({ theme }) => theme.colors.background.paper};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  padding: ${({ theme }) => theme.spacing[6]};
-  box-shadow: ${({ theme }) => theme.shadows.md};
-  cursor: pointer;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: ${({ theme }) => theme.shadows.xl};
-  }
-`;
-
-const LocationSection = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing[2]};
-  margin-bottom: ${({ theme }) => theme.spacing[4]};
-  color: ${({ theme }) => theme.colors.text.secondary};
-`;
-
-const Location = styled.span`
-  font-size: ${({ theme }) => theme.typography.fontSize.lg};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
-`;
-
-const WeatherInfo = styled.div`
-  text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing[4]};
-`;
-
-const MainTemp = styled.div`
-  font-size: ${({ theme }) => theme.typography.fontSize["4xl"]};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-  color: ${({ theme }) => theme.colors.primary.main};
-  margin-bottom: ${({ theme }) => theme.spacing[2]};
-`;
-
-const Description = styled.div`
-  font-size: ${({ theme }) => theme.typography.fontSize.base};
-  color: ${({ theme }) => theme.colors.text.secondary};
-  text-transform: capitalize;
-`;
-
-const TempRange = styled.div`
-  display: flex;
-  justify-content: space-around;
-  padding: ${({ theme }) => theme.spacing[4]} 0;
-  border-top: 1px solid ${({ theme }) => theme.colors.border.light};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
-  margin-bottom: ${({ theme }) => theme.spacing[4]};
-`;
-
-const TempItem = styled.div`
-  text-align: center;
-`;
-
-const Label = styled.div`
-  font-size: ${({ theme }) => theme.typography.fontSize.sm};
-  color: ${({ theme }) => theme.colors.text.secondary};
-  margin-bottom: ${({ theme }) => theme.spacing[1]};
-`;
-
-const Value = styled.div`
-  font-size: ${({ theme }) => theme.typography.fontSize.lg};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  color: ${({ theme }) => theme.colors.text.primary};
-`;
-
-const ViewDetail = styled.div`
-  text-align: center;
-  color: ${({ theme }) => theme.colors.primary.main};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
-`;
-
-const LoadingCard = styled.div`
-  background: ${({ theme }) => theme.colors.background.paper};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  padding: ${({ theme }) => theme.spacing[12]};
-  text-align: center;
-  color: ${({ theme }) => theme.colors.text.secondary};
-`;
-
-const ErrorCard = styled(LoadingCard)`
-  background: ${({ theme }) => theme.colors.status.error};
-  color: white;
-`;

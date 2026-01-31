@@ -1,6 +1,5 @@
 "use client";
 
-import styled from "@emotion/styled";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { SearchBar } from "@/src/widgets/search-bar";
@@ -64,79 +63,32 @@ export default function HomePage() {
   };
 
   return (
-    <Container>
-      <Header>
-        <Title>날씨</Title>
+    <div className="min-h-screen bg-[#F5F7FA]">
+      <header className="sticky top-0 z-[1100] bg-white px-6 py-6 shadow-sm md:px-4 md:py-4">
+        <h1 className="mb-4 text-center text-2xl font-bold text-[#1A1A1A] md:text-xl">
+          날씨
+        </h1>
         <SearchBar onSelectLocation={handleSelectLocation} />
-      </Header>
+      </header>
 
-      <MainContent>
-        <CurrentWeatherSection>
-          <SectionTitle>현재 위치</SectionTitle>
+      <main className="mx-auto max-w-[1200px] px-6 py-6 md:px-4 md:py-4">
+        <section className="mb-8">
+          <h2 className="mb-4 text-xl font-semibold text-[#1A1A1A]">
+            현재 위치
+          </h2>
           <WeatherCurrentSimple
             coords={currentCoords}
             locationName={currentLocationName}
           />
-        </CurrentWeatherSection>
+        </section>
 
-        <FavoritesSection>
-          <SectionTitle>즐겨찾기</SectionTitle>
+        <section>
+          <h2 className="mb-4 text-xl font-semibold text-[#1A1A1A]">
+            즐겨찾기
+          </h2>
           <FavoritesGrid />
-        </FavoritesSection>
-      </MainContent>
-    </Container>
+        </section>
+      </main>
+    </div>
   );
 }
-
-const Container = styled.div`
-  min-height: 100vh;
-  background: ${({ theme }) => theme.colors.background.default};
-`;
-
-const Header = styled.header`
-  background: ${({ theme }) => theme.colors.background.paper};
-  padding: ${({ theme }) => theme.spacing[6]};
-  box-shadow: ${({ theme }) => theme.shadows.sm};
-  position: sticky;
-  top: 0;
-  z-index: ${({ theme }) => theme.zIndex.sticky};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    padding: ${({ theme }) => theme.spacing[4]};
-  }
-`;
-
-const Title = styled.h1`
-  font-size: ${({ theme }) => theme.typography.fontSize["2xl"]};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-  color: ${({ theme }) => theme.colors.text.primary};
-  text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing[4]};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    font-size: ${({ theme }) => theme.typography.fontSize.xl};
-  }
-`;
-
-const MainContent = styled.main`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: ${({ theme }) => theme.spacing[6]};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    padding: ${({ theme }) => theme.spacing[4]};
-  }
-`;
-
-const CurrentWeatherSection = styled.section`
-  margin-bottom: ${({ theme }) => theme.spacing[8]};
-`;
-
-const FavoritesSection = styled.section``;
-
-const SectionTitle = styled.h2`
-  font-size: ${({ theme }) => theme.typography.fontSize.xl};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  color: ${({ theme }) => theme.colors.text.primary};
-  margin-bottom: ${({ theme }) => theme.spacing[4]};
-`;

@@ -1,6 +1,5 @@
 "use client";
 
-import styled from "@emotion/styled";
 import Image from "next/image";
 import type { ForecastData } from "@/src/entities/weather/model/types";
 
@@ -25,13 +24,18 @@ export const WeatherHourly = ({ forecast }: WeatherHourlyProps) => {
   });
 
   return (
-    <Container>
-      <ScrollContainer>
+    <div className="overflow-hidden rounded-2xl bg-white p-6 shadow-md md:rounded-lg md:p-4">
+      <div className="flex gap-3 overflow-x-auto overflow-y-hidden py-2 [-webkit-overflow-scrolling:touch] [scrollbar-color:#D1D5DB_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar-thumb:hover]:bg-[#9CA3AF] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#D1D5DB] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:h-1.5">
         {hourlyData.map((item, index) => (
-          <HourCard key={index}>
-            <TimeLabel>{item.time}</TimeLabel>
+          <div
+            key={index}
+            className="flex min-w-[120px] flex-col items-center rounded-lg border border-[#E5E7EB] bg-[#FAFBFC] p-4 transition-all duration-200 hover:-translate-y-1 hover:border-[#6BA3E8] hover:shadow-lg sm:min-w-[100px] sm:p-3"
+          >
+            <div className="mb-3 whitespace-nowrap text-sm font-semibold text-[#1A1A1A]">
+              {item.time}
+            </div>
 
-            <WeatherIcon>
+            <div className="mb-2 flex items-center justify-center [&_img]:block [&_img]:drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] sm:[&_img]:h-[50px] sm:[&_img]:w-[50px]">
               <Image
                 src={`https://openweathermap.org/img/wn/${item.icon}@2x.png`}
                 alt={item.description}
@@ -39,133 +43,22 @@ export const WeatherHourly = ({ forecast }: WeatherHourlyProps) => {
                 height={60}
                 unoptimized
               />
-            </WeatherIcon>
+            </div>
 
-            <Temperature>{item.temperature}°</Temperature>
+            <div className="mb-2 text-2xl font-bold text-[#1A1A1A]">
+              {item.temperature}°
+            </div>
 
-            <Description>{item.description}</Description>
+            <div className="mb-2 flex min-h-[28px] items-center text-center text-xs leading-tight text-[#6B7280]">
+              {item.description}
+            </div>
 
-            <FeelsLike>체감 {item.feelsLike}°</FeelsLike>
-          </HourCard>
+            <div className="rounded-lg bg-[#F5F7FA] px-2 py-1 text-xs text-[#D1D5DB]">
+              체감 {item.feelsLike}°
+            </div>
+          </div>
         ))}
-      </ScrollContainer>
-    </Container>
+      </div>
+    </div>
   );
 };
-
-const Container = styled.div`
-  background: ${({ theme }) => theme.colors.background.paper};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  padding: ${({ theme }) => theme.spacing[6]};
-  box-shadow: ${({ theme }) => theme.shadows.md};
-  overflow: hidden;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    padding: ${({ theme }) => theme.spacing[4]};
-    border-radius: ${({ theme }) => theme.borderRadius.lg};
-  }
-`;
-
-const ScrollContainer = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing[3]};
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: ${({ theme }) => theme.spacing[2]} 0;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: ${({ theme }) => theme.colors.border.main} transparent;
-
-  &::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.colors.border.main};
-    border-radius: ${({ theme }) => theme.borderRadius.full};
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: ${({ theme }) => theme.colors.border.dark};
-  }
-`;
-
-const HourCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 120px;
-  padding: ${({ theme }) => theme.spacing[4]};
-  background: ${({ theme }) => theme.colors.background.elevated};
-  border: 1px solid ${({ theme }) => theme.colors.border.light};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  transition: all 0.2s;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: ${({ theme }) => theme.shadows.lg};
-    border-color: ${({ theme }) => theme.colors.primary.light};
-  }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    min-width: 100px;
-    padding: ${({ theme }) => theme.spacing[3]};
-  }
-`;
-
-const TimeLabel = styled.div`
-  font-size: ${({ theme }) => theme.typography.fontSize.sm};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  color: ${({ theme }) => theme.colors.text.primary};
-  margin-bottom: ${({ theme }) => theme.spacing[3]};
-  white-space: nowrap;
-`;
-
-const WeatherIcon = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: ${({ theme }) => theme.spacing[2]};
-
-  img {
-    display: block;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-  }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    img {
-      width: 50px;
-      height: 50px;
-    }
-  }
-`;
-
-const Temperature = styled.div`
-  font-size: ${({ theme }) => theme.typography.fontSize["2xl"]};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
-  color: ${({ theme }) => theme.colors.text.primary};
-  margin-bottom: ${({ theme }) => theme.spacing[2]};
-`;
-
-const Description = styled.div`
-  font-size: ${({ theme }) => theme.typography.fontSize.xs};
-  color: ${({ theme }) => theme.colors.text.secondary};
-  text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing[2]};
-  line-height: ${({ theme }) => theme.typography.lineHeight.tight};
-  min-height: 28px;
-  display: flex;
-  align-items: center;
-`;
-
-const FeelsLike = styled.div`
-  font-size: ${({ theme }) => theme.typography.fontSize.xs};
-  color: ${({ theme }) => theme.colors.text.hint};
-  padding: ${({ theme }) => theme.spacing[1]} ${({ theme }) => theme.spacing[2]};
-  background: ${({ theme }) => theme.colors.background.default};
-  border-radius: ${({ theme }) => theme.borderRadius.base};
-`;

@@ -1,6 +1,5 @@
 "use client";
 
-import styled from "@emotion/styled";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
@@ -61,44 +60,57 @@ export default function DetailPage() {
 
   if (!coords) {
     return (
-      <Container>
-        <LoadingMessage>위치 정보를 불러오는 중...</LoadingMessage>
-      </Container>
+      <div className="min-h-screen bg-[#F5F7FA]">
+        <div className="rounded-2xl bg-white p-8 text-center text-[#6B7280]">
+          위치 정보를 불러오는 중...
+        </div>
+      </div>
     );
   }
 
   return (
-    <Container>
-      <Header>
-        <BackButton onClick={handleBack}>
+    <div className="min-h-screen bg-[#F5F7FA]">
+      <header className="sticky top-0 z-[1100] flex items-center justify-between bg-white px-6 py-4 shadow-sm">
+        <button
+          onClick={handleBack}
+          className="flex h-10 w-10 items-center justify-center rounded-lg bg-transparent text-[#1A1A1A] transition-colors duration-200 hover:bg-[#F5F7FA]"
+        >
           <ArrowLeft size={24} />
-        </BackButton>
-        <Title>{location}</Title>
+        </button>
+        <h1 className="flex-1 text-center text-xl font-semibold text-[#1A1A1A]">
+          {location}
+        </h1>
         <FavoriteButton location={location} lat={coords.lat} lon={coords.lon} />
-      </Header>
+      </header>
 
-      <Content>
-        <WeatherSection>
+      <main className="mx-auto max-w-[800px] px-6 py-6 md:px-4 md:py-4">
+        <section className="mb-8">
           {weatherLoading ? (
-            <LoadingMessage>날씨 정보를 불러오는 중...</LoadingMessage>
+            <div className="rounded-2xl bg-white p-8 text-center text-[#6B7280]">
+              날씨 정보를 불러오는 중...
+            </div>
           ) : weather ? (
             <WeatherCardWithKoreanName
               weather={weather}
               koreanName={location}
             />
           ) : null}
-        </WeatherSection>
+        </section>
 
-        <HourlySection>
-          <SectionTitle>시간대별 날씨</SectionTitle>
+        <section>
+          <h2 className="mb-4 text-xl font-semibold text-[#1A1A1A]">
+            시간대별 날씨
+          </h2>
           {forecastLoading ? (
-            <LoadingMessage>예보 정보를 불러오는 중...</LoadingMessage>
+            <div className="rounded-2xl bg-white p-8 text-center text-[#6B7280]">
+              예보 정보를 불러오는 중...
+            </div>
           ) : forecast ? (
             <WeatherHourly forecast={forecast} />
           ) : null}
-        </HourlySection>
-      </Content>
-    </Container>
+        </section>
+      </main>
+    </div>
   );
 }
 
@@ -116,75 +128,3 @@ function WeatherCardWithKoreanName({
 
   return <WeatherCard weather={weatherWithKoreanName} />;
 }
-
-const Container = styled.div`
-  min-height: 100vh;
-  background: ${({ theme }) => theme.colors.background.default};
-`;
-
-const Header = styled.header`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing[4]} ${({ theme }) => theme.spacing[6]};
-  background: ${({ theme }) => theme.colors.background.paper};
-  box-shadow: ${({ theme }) => theme.shadows.sm};
-  position: sticky;
-  top: 0;
-  z-index: ${({ theme }) => theme.zIndex.sticky};
-`;
-
-const BackButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: transparent;
-  color: ${({ theme }) => theme.colors.text.primary};
-  border-radius: ${({ theme }) => theme.borderRadius.base};
-  transition: background-color 0.2s;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.background.default};
-  }
-`;
-
-const Title = styled.h1`
-  font-size: ${({ theme }) => theme.typography.fontSize.xl};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  color: ${({ theme }) => theme.colors.text.primary};
-  flex: 1;
-  text-align: center;
-`;
-
-const Content = styled.main`
-  max-width: 800px;
-  margin: 0 auto;
-  padding: ${({ theme }) => theme.spacing[6]};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    padding: ${({ theme }) => theme.spacing[4]};
-  }
-`;
-
-const WeatherSection = styled.section`
-  margin-bottom: ${({ theme }) => theme.spacing[8]};
-`;
-
-const HourlySection = styled.section``;
-
-const SectionTitle = styled.h2`
-  font-size: ${({ theme }) => theme.typography.fontSize.xl};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  color: ${({ theme }) => theme.colors.text.primary};
-  margin-bottom: ${({ theme }) => theme.spacing[4]};
-`;
-
-const LoadingMessage = styled.div`
-  text-align: center;
-  padding: ${({ theme }) => theme.spacing[8]};
-  color: ${({ theme }) => theme.colors.text.secondary};
-  background: ${({ theme }) => theme.colors.background.paper};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-`;
