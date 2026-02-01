@@ -64,13 +64,12 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
-      <header className="sticky top-0 z-[1100] bg-white px-6 py-6 shadow-sm md:px-4 md:py-4">
+      <div className="flex flex-col items-center px-6 py-6">
         <h1 className="mb-4 text-center text-2xl font-bold text-[#1A1A1A] md:text-xl">
           날씨
         </h1>
         <SearchBar onSelectLocation={handleSelectLocation} />
-      </header>
-
+      </div>
       <main className="mx-auto max-w-[1200px] px-6 py-6 md:px-4 md:py-4">
         <section className="mb-8">
           <h2 className="mb-4 text-xl font-semibold text-[#1A1A1A]">

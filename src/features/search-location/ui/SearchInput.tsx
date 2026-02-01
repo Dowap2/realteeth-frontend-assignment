@@ -27,8 +27,8 @@ export const SearchInput = ({ onSelectLocation }: SearchInputProps) => {
   };
 
   return (
-    <div className="relative w-full max-w-[600px]">
-      <div className="flex items-center rounded-lg bg-white p-4 shadow-md transition-shadow duration-200 focus-within:shadow-lg">
+    <div className="relative w-full">
+      <div className="flex h-[56px] items-center rounded-lg bg-white px-4 shadow-md transition-shadow duration-200 focus-within:shadow-lg">
         <Search size={20} className="shrink-0 text-[#6B7280]" />
         <input
           type="text"
@@ -50,7 +50,6 @@ export const SearchInput = ({ onSelectLocation }: SearchInputProps) => {
           </button>
         ) : null}
       </div>
-
       {isOpen && results.length > 0 && (
         <ul className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-[1000] max-h-[400px] list-none overflow-y-auto rounded-lg bg-white shadow-lg">
           {results.map((location) => (
@@ -64,7 +63,6 @@ export const SearchInput = ({ onSelectLocation }: SearchInputProps) => {
           ))}
         </ul>
       )}
-
       {isOpen && results.length === 0 && query && (
         <div className="absolute left-0 right-0 top-[calc(100%+0.5rem)] rounded-lg bg-white p-6 text-center text-[#6B7280] shadow-lg">
           검색 결과가 없습니다.
