@@ -1,166 +1,148 @@
-# Realteeth Frontend Assignment - Weather App
+# Weather App
 
-실시간 날씨 정보를 제공하는 Progressive Web App
+실시간 날씨 정보를 제공하는 Next.js 기반 웹 애플리케이션
+
+---
 
 ## 🚀 프로젝트 실행 방법
 
-### 설치
+### 환경 요구사항
 
-\`\`\`bash
+- Node.js 18.17 이상
+- npm
+
+### 설치 및 실행
+
+```bash
+# 의존성 설치
 npm install
-\`\`\`
 
-### 환경 변수 설정
+# 환경 변수 설정 (.env.local 파일을 프로젝트 루트에 생성)
+# NEXT_PUBLIC_OPENWEATHER_API_KEY=your_openweathermap_api_key
+# KAKAO_REST_API_KEY=your_kakao_rest_api_key
 
-프로젝트 루트에 `.env` 파일 생성:
-\`\`\`
-VITE_OPENWEATHER_API_KEY=your_api_key_here
-\`\`\`
-
-### 개발 서버 실행
-
-\`\`\`bash
+# 개발 서버 실행
 npm run dev
-\`\`\`
 
-### 프로덕션 빌드
-
-\`\`\`bash
+# 프로덕션 빌드
 npm run build
-npm run preview
-\`\`\`
 
-## 🎯 구현 기능
+# 프로덕션 서버 실행
+npm start
+```
 
-### 1. 날씨 정보 표시
+개발 서버는 기본적으로 `http://localhost:3000`에서 실행됩니다.
 
-- [ ] OpenWeatherMap API를 통한 실시간 날씨 데이터 조회
-- [ ] 현재 기온, 최저/최고 기온 표시
-- [ ] 시간대별 날씨 정보 제공
+---
 
-### 2. 위치 기반 서비스
+## 🎯 구현한 기능
 
-- [ ] 앱 첫 진입 시 현재 위치 자동 감지
-- [ ] Geolocation API 활용
+### 1. 현재 날씨 정보 표시
+
+- OpenWeatherMap API를 통한 실시간 날씨 데이터 조회
+- 현재 기온, 최저/최고 기온, 날씨 상태와 아이콘 표시
+- 시간대별 날씨 정보를 카드 형태로 표시 (아이폰 스타일 UI)
+
+### 2. 현재 위치 기반 날씨
+
+- 앱 진입 시 Geolocation API를 통해 사용자의 현재 위치 자동 감지
+- Kakao Reverse Geocoding API를 활용한 좌표 → 한글 주소 변환
+- GPS 좌표를 기반으로 해당 위치의 날씨 정보를 조회하여 표시
 
 ### 3. 장소 검색
 
-- [ ] 대한민국 행정구역(시/군/구/동) 검색
-- [ ] 자동완성 기능
-- [ ] 검색 결과 리스트 표시
-- [ ] 정보 없는 경우 안내 메시지
+- 대한민국 행정구역 전체를 포함한 korea_districts.json 데이터 활용
+- 시, 군, 구, 동 단위로 검색 가능 (예: "서울특별시", "종로구", "청운동")
+- `-` 구분자를 무시하고 연속 문자열로도 검색 가능 (예: "전북부안주산" → "전북특별자치도-부안군-주산면")
+- 공백도 무시하여 자유형태의 검색 지원
+- 실시간 자동완성으로 매칭되는 장소 목록 표시
+- 날씨 정보가 제공되지 않는 장소의 경우 안내 메시지 표시
 
 ### 4. 즐겨찾기
 
-- [ ] 최대 6개 장소 즐겨찾기 추가/삭제
-- [ ] 카드 UI 형태로 표시
-- [ ] 장소 이름(별칭) 수정 기능
-- [ ] 즐겨찾기 카드 클릭 시 상세 페이지 이동
-- [ ] localStorage를 통한 데이터 영구 저장
+- 최대 6개의 장소를 즐겨찾기에 추가하고 삭제할 수 있음
+- 즐겨찾기 목록은 카드 UI 형태로 표시되며, 각 카드에 현재 날씨와 최저/최고 기온 표시
+- 즐겨찾기 카드를 클릭하면 해당 장소의 상세 날씨 페이지로 이동
+- 장소의 별칭(표시명)을 수정할 수 있음
+- localStorage를 통한 데이터 영구 저장
+- 좌표 기반 중복 제거: 주소 문자열이 다르더라도 같은 좌표(약 1.1km 반경) 내의 장소는 중복으로 판단하여 추가하지 않음
 
-## 🛠 기술 스택
+### 5. 상세 페이지
+
+- 선택된 장소의 전체 날씨 정보를 표시
+- URL 파라미터로 한글 지명을 사용하여 이동
+- 시간대별 날씨 정보를 카드로 표시
+
+---
+
+## 🛠 사용한 기술 스택
 
 ### Core
 
-- React 18
-- TypeScript
-- Vite
-
-### Styling
-
-- Emotion (CSS-in-JS)
-- 반응형 디자인 (Mobile First)
+| 기술       | 버전 | 사용 목적                                |
+| ---------- | ---- | ---------------------------------------- |
+| Next.js    | 15   | 프레임워크 (App Router, API Routes, SSR) |
+| React      | 18   | UI 컴포넌트                              |
+| TypeScript | 5.x  | 타입 안전성                              |
 
 ### State Management
 
-- Tanstack Query v5 (서버 상태)
-- Zustand (클라이언트 상태)
+| 기술              | 사용 목적                                    |
+| ----------------- | -------------------------------------------- |
+| TanStack Query v5 | 서버 상태 관리 (날씨 API 조회, 캐싱, 리페치) |
+| Zustand           | 클라이언트 상태 관리 (즐겨찾기)              |
+| localStorage      | 즐겨찾기 데이터 영구 저장                    |
 
-### Architecture
+### API & 위치
 
-- FSD (Feature Sliced Design)
+| 기술               | 사용 목적                                      |
+| ------------------ | ---------------------------------------------- |
+| OpenWeatherMap API | 날씨 정보 조회 (현재 날씨, 시간대별 예보)      |
+| Kakao REST API     | 지오코딩 및 역지오코딩 (좌표 ↔ 한글 주소 변환) |
 
-### PWA
-
-- vite-plugin-pwa
-- Workbox
-
-### API
-
-- OpenWeatherMap API
-- Geolocation API
-
-### 배포
-
-- Vercel
-
-## 📁 프로젝트 구조 (FSD)
-
-\`\`\`
-src/
-├── app/ # 앱 초기화, 프로바이더
-├── pages/ # 페이지 컴포넌트
-├── widgets/ # 복합 UI 블록
-├── features/ # 사용자 기능
-├── entities/ # 비즈니스 엔티티
-├── shared/ # 공유 코드
-└── data/ # 정적 데이터
-\`\`\`
+---
 
 ## 🎨 주요 기술적 의사결정
 
-### 1. Emotion 선택 이유
+### 1. Next.js 도입
 
-- CSS-in-JS로 컴포넌트 기반 스타일링
-- TypeScript와 완벽한 통합
-- 동적 스타일링 용이
+**이유:**
 
-### 2. FSD 아키텍처 채택
+- App Router를 통한 파일 기반 라우팅으로 코드의 직관성 높음
+- API Routes를 활용하여 백엔드 없이 Kakao API 키를 안전하게 숨길 수 있음 (서버측 환경 변수 활용)
+- 서버 컴포넌트와 클라이언트 컴포넌트의 명확한 분리로 초기 로드 퍼포던스 개선
+- Image 컴포넌트를 통한 자동 이미지 최적화
 
-- 명확한 계층 구조
-- 확장성과 유지보수성
-- 비즈니스 로직 분리
+### 2. Kakao API를 통한 한글화
 
-### 3. Tanstack Query 활용
+**결정:** OpenWeatherMap Geocoding 대신 Kakao Geocoding + Reverse Geocoding 사용
 
-- 서버 상태 관리 최적화
-- 자동 캐싱 및 리페칭
-- 로딩/에러 상태 관리
+**이유:**
 
-### 4. PWA 구현
+- OpenWeatherMap은 영문 지명만 반환 (예: "Namyangju-si"), 매핑 테이블 유지 필요
+- Kakao API는 한글 지명을 직접 반환 (예: "경기도 남양주시"), 별도 변환 불필요
+- 역지오코딩(좌표 → 주소)을 통해 GPS 위치를 한글 주소로 바로 변환 가능
+- Next.js API Routes에서 Kakao API 키를 환경 변수로 관리하여 클라이언트 노출 방지
 
-- 오프라인 지원
-- 앱과 같은 사용자 경험
-- 홈 화면 추가 가능
+### 3. 좌표 기반 즐겨찾기 중복 제거
 
-## 🔗 배포 URL
+**결정:** 주소 문자열 비교 대신 좌표 기준 비교
 
-- Production: [배포 후 URL 추가]
+**이유:**
 
-## 📝 라이선스
+- 같은 장소가 다른 주소 문자열로 표현될 수 있음 (예: "남양주시 진접읍" vs "경기 남양주시 진접읍")
+- 문자열 비교는 표현 방식에 따라 중복 감지에 실패
+- 좌표 기준 비교로 물리적으로 같은 장소임을 정확히 판단 가능
+- 소수점 2자리로 반올림하여 비교하면 약간의 GPS 오차도 허용
 
-MIT
-\`\`\`
+### 4. 검색 로직: 구분자와 공백 무시
 
-## 환경 변수 파일 (.env.example)
+**결정:** 검색 시 `-`와 공백을 모두 제거한 후 비교
 
-```.env
-# OpenWeatherMap API Key
-VITE_OPENWEATHER_API_KEY=your_api_key_here
+**이유:**
 
-# API Base URL
-VITE_WEATHER_API_URL=https://api.openweathermap.org/data/2.5
-```
+- korea_districts.json의 데이터가 `전북특별자치도-부안군-주산면-사산리` 형태로 저장됨
+- 사용자가 "전북부안주산"이나 "전북 부안 주산"과 같이 자유형태로 검색할 수 있도록 함
+- 정규화(normalize) 후 비교하여 입력 형식에 무관하게 정확한 검색 결과 제공
 
-## Prettier 설정 (.prettierrc)
-
-```json
-{
-  "semi": false,
-  "singleQuote": true,
-  "tabWidth": 2,
-  "trailingComma": "es5",
-  "printWidth": 80,
-  "arrowParens": "avoid"
-}
-```
+---
